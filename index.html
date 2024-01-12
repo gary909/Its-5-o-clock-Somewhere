@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Current 5 PM Location</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #location {
+            font-size: 24px;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Location where it is currently 5 PM:</h1>
+    <div id="location"></div>
+
+    <script>
+        async function getCurrent5PMLocation() {
+            const apiKey = 'YOUR_API_KEY'; // Replace with your TimeZoneDB API key
+            const apiUrl = `http://api.timezonedb.com/v2.1/list-time-zone?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                const currentUTC = new Date();
+                const currentHour = currentUTC.getUTCHours();
+
+                for (const timeZone of data.zones) {
+                    if (currentHour === 17 + timeZone.utcOffset / 3600) {
+                        document.getElementById('location').textContent = timeZone.zoneName;
+                        return;
+                    }
+                }
+
+                document.getElementById('location').textContent = "No location found for 5 PM.";
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                document.getElementById('location').textContent = "Error fetching data.";
+            }
+        }
+
+        getCurrent5PMLocation();
+    </script>
+</body>
+</html>
